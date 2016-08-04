@@ -69,9 +69,10 @@ iptables -A INPUT -m state --state ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -o lo -j ACCEPT
 iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW,RELATED -m limit --limit 100/second -p tcp --dport 21 -j ACCEPT
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p tcp -j ACCEPT
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p udp -j ACCEPT
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p icmp -j ACCEPT
+iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p tcp -j DROP
+iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p udp -j DROP
+iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p icmp -j DROP
+iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -j ACCEPT
 
 ############ FINISH ############
 iptables -A INPUT -j DROPNLOG
