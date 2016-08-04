@@ -12,7 +12,7 @@
 # Change it on your server. We purposely don't want it as config files or arguments - script must be short, easy understandable.
 PUBLIC_INTERFACE="eth0"
 PUBLIC_IPS="149.202.42.82 3.3.3.3"
-TRUSTED_IPS_FILE="10.0.0.0/16"
+TRUSTED_IPS="10.0.0.0/16"
 
 ############ CLEAR ############
 # allow everything in case of error in the middle of the script - we will deny at the end
@@ -35,7 +35,7 @@ ipset create blocked_ips hash:ip timeout 1200
 
 iptables -t mangle -A INPUT -m state --state INVALID -j DROP
 iptables -t raw -A PREROUTING -i $PUBLIC_INTERFACE -p tcp -m tcp --syn -j CT --notrack
-iptables -t raw -A PREROUTING -i $PUBLIC_INTERFACE -m set --match-set blocked_ips -j DROP
+iptables -t raw -A PREROUTING -i $PUBLIC_INTERFACE -m set --match-set blocked_ips src -j DROP
 
 # to log just a part of all dropped
 iptables -N DROPNLOG
@@ -48,7 +48,7 @@ iptables -A INPUT -m state --state INVALID -j DROP
 iptables -A INPUT -i $PUBLIC_INTERFACE -p tcp -m tcp -m state --state UNTRACKED -j SYNPROXY --sack-perm --timestamp --wscale 7 --mss 1460
 
 # whitelist
-while read IP from $TRUSTED_IPS_FILE; do
+while read IP from $TRUSTED_IPS; do
     iptables -A INPUT -i $PUBLIC_INTERFACE -s $IP -j ACCEPT
 done
 
