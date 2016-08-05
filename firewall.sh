@@ -10,8 +10,10 @@
 #apt-get install ipset iproute2
 
 # Change it on your server. We purposely don't want it as config files or arguments - script must be short, easy understandable.
-PUBLIC_INTERFACE="eth0"
-PUBLIC_IPS="149.202.42.82 3.3.3.3"
+PUBLIC_INTERFACE=`ip route get 8.8.8.8 | grep dev | awk '{print $5}'`
+PUBLIC_IPS=`ip address show dev eth0 | grep 'inet ' | awk '{print $2}' | cut -f 1 -d '/' | while read ip ; do echo -n "$ip "; done`
+#PUBLIC_INTERFACE="eth0"
+#PUBLIC_IPS="149.202.42.82 3.3.3.3"
 TRUSTED_IPS="10.0.0.0/16"
 
 ############ CLEAR ############
@@ -66,13 +68,7 @@ iptables -A INPUT -i $PUBLIC_INTERFACE -m state --state NEW -p icmp -j ACCEPT
 iptables -A INPUT -m state --state ESTABLISHED -j ACCEPT
 
 ############ OUTPUT ############
-iptables -A OUTPUT -o lo -j ACCEPT
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW,RELATED -m limit --limit 100/second -p tcp --dport 21 -j ACCEPT
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p tcp -j DROP
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p udp -j DROP
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -m limit --limit 100/second -p icmp -j DROP
-iptables -A OUTPUT -o $PUBLIC_INTERFACE -m state --state NEW -j ACCEPT
+iptables -A OUTPUT -j ACCEPT
 
 ############ FINISH ############
 iptables -A INPUT -j DROPNLOG
