@@ -50,7 +50,7 @@ iptables -A INPUT -m state --state INVALID -j DROP
 iptables -A INPUT -i $PUBLIC_INTERFACE -p tcp -m tcp -m state --state UNTRACKED -j SYNPROXY --sack-perm --timestamp --wscale 7 --mss 1460
 
 # whitelist
-while read IP from $TRUSTED_IPS; do
+for IP in $TRUSTED_IPS; do
     iptables -A INPUT -i $PUBLIC_INTERFACE -s $IP -j ACCEPT
 done
 
