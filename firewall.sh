@@ -14,7 +14,7 @@ PUBLIC_INTERFACE=`ip route get 8.8.8.8 | grep dev | awk '{print $5}'`
 PUBLIC_IPS=`ip address show dev eth0 | grep 'inet ' | awk '{print $2}' | cut -f 1 -d '/' | while read ip ; do echo -n "$ip "; done`
 #PUBLIC_INTERFACE="eth0"
 #PUBLIC_IPS="149.202.42.82 3.3.3.3"
-TRUSTED_IPS="10.0.0.0/16"
+TRUSTED_IPS="10.0.0.0/8 192.168.0.0/16"
 
 ############ CLEAR ############
 # allow everything in case of error in the middle of the script - we will deny at the end
