@@ -2,18 +2,19 @@
 
 #title           :atomicfirewall.sh
 #description     :simple, powerfull, DDOS copynpaste iptables firewall
+#                : We purposely don't want any config files or arguments
+#                   - script must be short, easy understandable, and should work on most internet systems without any tweaks. 
 #author          :bartek@pewniak.net
-#date            :20160801
-#version         :0.1    
+#date            :20160924
+#version         :0.2    
 #==============================================================================
 
 #apt-get install ipset iproute2
 
-# Change it on your server. We purposely don't want it as config files or arguments - script must be short, easy understandable.
 PUBLIC_INTERFACE=`ip route get 8.8.8.8 | grep dev | awk '{print $5}'`
 PUBLIC_IPS=`ip address show dev eth0 | grep 'inet ' | awk '{print $2}' | cut -f 1 -d '/' | while read ip ; do echo -n "$ip "; done`
 #PUBLIC_INTERFACE="eth0"
-#PUBLIC_IPS="149.202.42.82 3.3.3.3"
+#PUBLIC_IPS="192.167.42.82 3.3.3.3"
 TRUSTED_IPS="10.0.0.0/8 192.168.0.0/16"
 
 ############ CLEAR ############
@@ -22,9 +23,6 @@ iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -F
-iptables -F -t nat
-iptables -F -t mangle
-iptables -F -t raw
 iptables -X
 
 ############ MISC ############
